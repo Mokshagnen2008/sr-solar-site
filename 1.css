@@ -378,17 +378,21 @@ h1 {
     box-shadow: 0 10px 30px rgba(22, 101, 52, 0.08);
 }
 
-.provider-mark {
-    width: 44px;
-    height: 44px;
+.provider-logo {
+    display: block;
+    width: 160px;
+    max-width: 100%;
+    height: 50px;
     margin-bottom: 16px;
-    display: grid;
-    place-items: center;
-    border-radius: 12px;
-    color: #166534;
-    background: #fff3b0;
-    font-size: 1.3rem;
-    font-weight: 900;
+    object-fit: contain;
+    object-position: left center;
+}
+
+.provider-logo--vikram {
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: #166534;
+    box-sizing: border-box;
 }
 
 .provider-card h3 {
