@@ -213,6 +213,10 @@
     <footer>
         <p>&copy; <span id="current-year"></span> SR Solar. Powering a cleaner tomorrow.</p>
         <a href="#home">Back to top</a>
+        <div class="footer-share">
+            <button class="secondary-button share-button" id="share-site" type="button">Share this website</button>
+            <span class="share-status" id="share-status" role="status" aria-live="polite"></span>
+        </div>
     </footer>
 
     <aside class="quick-tools" aria-label="Solar help and appointment tools">
@@ -267,6 +271,62 @@
         });
 
         document.getElementById("current-year").textContent = new Date().getFullYear();
+
+        const shareButton = document.getElementById("share-site");
+        const shareStatus = document.getElementById("share-status");
+
+        async function copyWebsiteUrl(url) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(url);
+                    return;
+                } catch {
+                    // Fall through to the browser's copy command.
+                }
+            }
+
+            const copyField = document.createElement("textarea");
+            copyField.value = url;
+            copyField.setAttribute("readonly", "");
+            copyField.style.position = "fixed";
+            copyField.style.opacity = "0";
+            document.body.append(copyField);
+            copyField.select();
+            const copied = document.execCommand("copy");
+            copyField.remove();
+
+            if (!copied) {
+                throw new Error("The browser could not copy the website link.");
+            }
+        }
+
+        shareButton.addEventListener("click", async () => {
+            const url = new URL(window.location.href);
+            url.hash = "";
+            const shareUrl = url.href;
+            shareStatus.textContent = "";
+
+            if (typeof navigator.share === "function") {
+                try {
+                    await navigator.share({
+                        title: document.title,
+                        text: "Visit SR Solar",
+                        url: shareUrl
+                    });
+                    shareStatus.textContent = "Share options opened.";
+                    return;
+                } catch (error) {
+                    if (error.name === "AbortError") return;
+                }
+            }
+
+            try {
+                await copyWebsiteUrl(shareUrl);
+                shareStatus.textContent = "Website link copied.";
+            } catch {
+                shareStatus.textContent = `Copy this website link: ${shareUrl}`;
+            }
+        });
 
         const chatToggle = document.getElementById("chat-toggle");
         const chatPanel = document.getElementById("chat-panel");
