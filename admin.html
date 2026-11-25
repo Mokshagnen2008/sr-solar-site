@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#166534">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Login | SR Solar</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="1.css">
+    <script type="module" src="admin.js"></script>
+</head>
+<body class="admin-page">
+    <header class="topbar">
+        <nav class="navbar" aria-label="Admin navigation">
+            <a class="brand" href="index.html#home" aria-label="SR Solar home">
+                <span class="brand-icon">SR</span>
+                <span>SR Solar</span>
+            </a>
+            <a href="index.html#projects">View website</a>
+        </nav>
+    </header>
+
+    <main class="admin-main">
+        <section class="admin-card" aria-labelledby="admin-title">
+            <span class="eyebrow">Private tools</span>
+            <h1 id="admin-title">Admin login</h1>
+            <p class="admin-intro">Sign in with a one-time email link to manage project photos. Only the authorized admin email can use these tools.</p>
+
+            <div class="admin-setup" id="setup-guide">
+                <h2>One-time setup needed</h2>
+                <p>The sign-in and photo storage are not enabled until the Supabase project settings are added.</p>
+                <ol>
+                    <li>In <code>supabase-config.js</code>, replace the project URL and public publishable/anon key placeholders. That public key is designed for browser use; never put a service-role key here.</li>
+                    <li>Run <a href="supabase-setup.sql">supabase-setup.sql</a> in your Supabase SQL Editor to create the photo table, public read access, and admin-only write policies.</li>
+                    <li>In Supabase Authentication URL settings, set the site URL to <code>https://mokshagnen2008.github.io/sr-solar-site</code> and add <code>https://mokshagnen2008.github.io/sr-solar-site/admin.html</code> as an allowed redirect URL. Enable email sign-in.</li>
+                    <li>Publish these files to the existing GitHub Pages repository. Login stays disabled until valid settings are configured.</li>
+                </ol>
+            </div>
+
+            <form class="admin-form" id="login-form" hidden>
+                <label for="admin-email">Authorized admin email</label>
+                <input id="admin-email" name="email" type="email" value="smoksha1989@gmail.com" autocomplete="email" readonly required>
+                <button class="primary-button" id="login-button" type="submit">Email me a secure sign-in link</button>
+                <p class="admin-intro">The one-time link will be sent only to the authorized email above. No password is stored by this website.</p>
+            </form>
+
+            <p class="admin-status" id="login-status" role="status" aria-live="polite">Admin sign-in is disabled until Supabase is configured.</p>
+        </section>
+
+        <section class="admin-tools" id="admin-tools" aria-labelledby="admin-tools-title" hidden>
+            <div class="admin-tools-heading">
+                <div>
+                    <span class="eyebrow">Authorized session</span>
+                    <h2 id="admin-tools-title">Manage project photos</h2>
+                </div>
+                <button class="admin-signout" id="signout-button" type="button">Sign out</button>
+            </div>
+
+            <form class="admin-upload-form" id="upload-form">
+                <label for="photo-file">Photo (JPEG, PNG, or WebP; up to 10 MB)</label>
+                <input id="photo-file" name="photo" type="file" accept="image/jpeg,image/png,image/webp" required>
+                <label for="photo-alt">Photo description for visitors and screen readers</label>
+                <input id="photo-alt" name="alt" type="text" maxlength="160" required>
+                <button class="primary-button" id="upload-button" type="submit">Upload project photo</button>
+            </form>
+            <p class="admin-status" id="upload-status" role="status" aria-live="polite"></p>
+
+            <h2>Photos in the gallery</h2>
+            <ul class="admin-photo-list" id="admin-photo-list" aria-live="polite"></ul>
+        </section>
+    </main>
+</body>
+</html>
