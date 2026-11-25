@@ -5,7 +5,7 @@ import {
     PROJECT_PHOTOS_BUCKET,
     SUPABASE_PUBLIC_KEY,
     SUPABASE_URL
-} from "./supabase-config.js";
+} from "./supabase-config.js?v=20261125-2";
 
 const setupGuide = document.getElementById("setup-guide");
 const loginForm = document.getElementById("login-form");
