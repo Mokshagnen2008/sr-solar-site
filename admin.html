@@ -34,14 +34,14 @@
                     <li>In <code>supabase-config.js</code>, replace the project URL and public publishable/anon key placeholders. That public key is designed for browser use; never put a service-role key here.</li>
                     <li>Run <a href="supabase-setup.sql">supabase-setup.sql</a> in your Supabase SQL Editor to create the photo table, public read access, and admin-only write policies.</li>
                     <li>In Supabase Authentication URL settings, set the site URL to <code>https://mokshagnen2008.github.io/sr-solar-site</code> and add <code>https://mokshagnen2008.github.io/sr-solar-site/admin.html</code> as an allowed redirect URL. Enable email sign-in.</li>
-                    <li>Publish these files to the existing GitHub Pages repository. Login stays disabled until valid settings are configured.</li>
+                    <li>After configuring Supabase, publish the updated settings to the existing GitHub Pages repository. Sign-in stays disabled until valid settings are configured.</li>
                 </ol>
             </div>
 
-            <form class="admin-form" id="login-form" hidden>
+            <form class="admin-form" id="login-form">
                 <label for="admin-email">Authorized admin email</label>
                 <input id="admin-email" name="email" type="email" value="smoksha1989@gmail.com" autocomplete="email" readonly required>
-                <button class="primary-button" id="login-button" type="submit">Email me a secure sign-in link</button>
+                <button class="primary-button" id="login-button" type="submit" disabled>Email me a secure sign-in link</button>
                 <p class="admin-intro">The one-time link will be sent only to the authorized email above. No password is stored by this website.</p>
             </form>
 

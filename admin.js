@@ -39,13 +39,19 @@ function publicPhotoUrl(supabase, storagePath) {
 async function startAdmin() {
     if (!hasSupabaseConfig()) {
         setupGuide.hidden = false;
-        loginForm.hidden = true;
+        loginForm.hidden = false;
+        loginButton.disabled = true;
+        loginForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            setStatus(loginStatus, "Sign-in is unavailable until Supabase is configured.", "error");
+        });
         setStatus(loginStatus, "Admin sign-in is disabled until a valid Supabase project URL and public key are configured.", "error");
         return;
     }
 
     setupGuide.hidden = true;
     loginForm.hidden = false;
+    loginButton.disabled = false;
 
     const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
     const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, {
