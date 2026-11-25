@@ -75,6 +75,27 @@ body {
     color: #166534;
 }
 
+.admin-nav-button {
+    min-height: 42px;
+    padding: 11px 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #fff;
+    background: #166534;
+    box-shadow: 0 8px 18px rgba(22, 101, 52, 0.18);
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.admin-nav-button:hover,
+.admin-nav-button:focus-visible {
+    color: #fff;
+    background: #14532d;
+}
+
 .visitor-count {
     display: flex;
     align-items: center;
@@ -975,10 +996,17 @@ footer a {
     .navbar {
         min-height: 64px;
         padding: 8px 16px;
+        gap: 12px;
     }
 
     .nav-links {
         top: 64px;
+    }
+
+    .admin-nav-button {
+        min-height: 40px;
+        padding: 9px 10px;
+        font-size: 0.82rem;
     }
 
     .brand-icon {
