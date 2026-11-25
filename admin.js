@@ -5,7 +5,7 @@ import {
     PROJECT_PHOTOS_BUCKET,
     SUPABASE_PUBLIC_KEY,
     SUPABASE_URL
-} from "./supabase-config.js?v=20261125-2";
+} from "./supabase-config.js?v=20261125-4";
 
 const setupGuide = document.getElementById("setup-guide");
 const loginForm = document.getElementById("login-form");
@@ -49,7 +49,7 @@ async function startAdmin() {
         return;
     }
 
-    setupGuide.hidden = true;
+    setupGuide.hidden = false;
     loginForm.hidden = false;
     loginButton.disabled = false;
 
@@ -109,7 +109,9 @@ async function startAdmin() {
     async function showSession(session) {
         if (!session) {
             adminTools.hidden = true;
+            setupGuide.hidden = false;
             loginForm.hidden = false;
+            setStatus(loginStatus, "Request a one-time sign-in link to open the admin tools.", "");
             return;
         }
 
@@ -125,6 +127,7 @@ async function startAdmin() {
         }
 
         loginForm.hidden = true;
+        setupGuide.hidden = true;
         adminTools.hidden = false;
         setStatus(loginStatus, "", "");
 

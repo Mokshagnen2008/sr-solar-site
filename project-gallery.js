@@ -3,7 +3,7 @@ import {
     PROJECT_PHOTOS_BUCKET,
     SUPABASE_PUBLIC_KEY,
     SUPABASE_URL
-} from "./supabase-config.js?v=20261125-2";
+} from "./supabase-config.js?v=20261125-4";
 
 async function loadPublishedProjectPhotos() {
     if (!hasSupabaseConfig()) return;
