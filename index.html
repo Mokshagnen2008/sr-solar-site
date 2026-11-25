@@ -32,10 +32,6 @@
                 <a href="#contact">Contact</a>
             </div>
 
-            <a class="visitor-count" href="#dashboard" aria-label="Website visitor count">
-                <span class="visitor-icon" aria-hidden="true">●</span>
-                <span><strong id="visitor-number">1</strong> visitors</span>
-            </a>
         </nav>
     </header>
 
@@ -273,14 +269,6 @@
             });
         });
 
-        const currentVisit = sessionStorage.getItem("sr-solar-session");
-        if (!currentVisit) {
-            sessionStorage.setItem("sr-solar-session", "1");
-            const totalVisits = Number(localStorage.getItem("sr-solar-visits") || 0) + 1;
-            localStorage.setItem("sr-solar-visits", String(totalVisits));
-        }
-        document.getElementById("visitor-number").textContent =
-            localStorage.getItem("sr-solar-visits") || "1";
         document.getElementById("current-year").textContent = new Date().getFullYear();
 
         const solarTips = [
