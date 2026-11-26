@@ -2,7 +2,7 @@
 
 The contact API is an Azure Functions v4 Node.js function. It saves website inquiries to the existing Supabase project. The Supabase service-role key is read only by the function and must never be added to website JavaScript or committed to source control.
 
-The admin page supports email verification links, project photo upload/removal, and an admin-only visit total. It previews a selected photo before upload and uses Supabase's browser-only sign-in flow because the current site is static GitHub Pages. Public pages record page visits and show an aggregate visit count; they cannot read individual visit records.
+The admin page supports email verification links, project photo upload/removal, and an admin-only visit total. It previews a selected photo before upload and uses Supabase's browser-only sign-in flow because the current site is static GitHub Pages. Public pages record page visits; only the admin page can read the total, and public visitors cannot read individual visit records.
 
 ## One-time Supabase setup
 
