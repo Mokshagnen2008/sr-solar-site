@@ -1,0 +1,9 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "SUPABASE_URL": "https://YOUR_PROJECT_ID.supabase.co",
+    "SUPABASE_SERVICE_ROLE_KEY": "YOUR_SERVER_ONLY_SERVICE_ROLE_KEY"
+  }
+}

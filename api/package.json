@@ -1,0 +1,17 @@
+{
+  "name": "sr-solar-site-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Azure Functions backend for SR Solar",
+  "main": "src/functions/*.js",
+  "scripts": {
+    "start": "func start",
+    "check": "node --check src/functions/contact.js"
+  },
+  "dependencies": {
+    "@azure/functions": "^4.7.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
