@@ -5,18 +5,23 @@ import {
     PROJECT_PHOTOS_BUCKET,
     SUPABASE_PUBLIC_KEY,
     SUPABASE_URL
-} from "./supabase-config.js?v=20261125-4";
+} from "./supabase-config.js?v=20261125-5";
 
 const setupGuide = document.getElementById("setup-guide");
 const loginForm = document.getElementById("login-form");
+const adminEmailInput = document.getElementById("admin-email");
 const loginButton = document.getElementById("login-button");
 const loginStatus = document.getElementById("login-status");
 const adminTools = document.getElementById("admin-tools");
 const uploadForm = document.getElementById("upload-form");
 const uploadButton = document.getElementById("upload-button");
 const uploadStatus = document.getElementById("upload-status");
+const photoFileInput = document.getElementById("photo-file");
+const photoPreview = document.getElementById("photo-preview");
 const photoList = document.getElementById("admin-photo-list");
 const signoutButton = document.getElementById("signout-button");
+const visitorTotal = document.getElementById("visitor-total");
+const visitorStatus = document.getElementById("visitor-status");
 
 function setStatus(element, message, state) {
     element.textContent = message;
@@ -27,6 +32,26 @@ function errorMessage(error) {
     return error instanceof Error ? error.message : String(error);
 }
 
+function photoBackendMessage(error, resource) {
+    const details = errorMessage(error);
+    const code = typeof error?.code === "string" ? error.code : "";
+    if (code === "PGRST205" || code === "42P01" || /relation .* does not exist|could not find the table/i.test(details)) {
+        return `The ${resource} database setup is missing. Run supabase-setup.sql in the Supabase SQL Editor, then reload this page. (${details})`;
+    }
+    if (code === "42501" || /row-level security|permission denied|not allowed/i.test(details)) {
+        return `Supabase denied access to ${resource}. Confirm the verified account is ${ADMIN_EMAIL} and run supabase-setup.sql. (${details})`;
+    }
+    if (/bucket.*not found|bucket.*does not exist/i.test(details)) {
+        return `The ${PROJECT_PHOTOS_BUCKET} photo bucket is missing. Run supabase-setup.sql in the Supabase SQL Editor. (${details})`;
+    }
+    return details;
+}
+
+function authCallbackError() {
+    const callbackParams = new URLSearchParams(window.location.hash.slice(1));
+    return callbackParams.get("error_description") || callbackParams.get("error") || "";
+}
+
 function setBusy(button, busy, idleLabel, busyLabel) {
     button.disabled = busy;
     button.textContent = busy ? busyLabel : idleLabel;
@@ -35,6 +60,26 @@ function setBusy(button, busy, idleLabel, busyLabel) {
 function publicPhotoUrl(supabase, storagePath) {
     return supabase.storage.from(PROJECT_PHOTOS_BUCKET).getPublicUrl(storagePath).data.publicUrl;
 }
+
+let previewObjectUrl = "";
+
+function clearPhotoPreview() {
+    if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+    previewObjectUrl = "";
+    photoPreview.removeAttribute("src");
+    photoPreview.hidden = true;
+}
+
+photoFileInput.addEventListener("change", () => {
+    clearPhotoPreview();
+    const file = photoFileInput.files[0];
+    if (!file || !["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > MAX_IMAGE_BYTES) return;
+    previewObjectUrl = URL.createObjectURL(file);
+    photoPreview.src = previewObjectUrl;
+    photoPreview.hidden = false;
+});
+
+uploadForm.addEventListener("reset", () => window.setTimeout(clearPhotoPreview, 0));
 
 async function startAdmin() {
     if (!hasSupabaseConfig()) {
@@ -56,7 +101,9 @@ async function startAdmin() {
     const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
     const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, {
         auth: {
-            flowType: "pkce",
+            // This GitHub Pages admin is browser-only. Implicit flow avoids
+            // requiring a PKCE verifier from the browser that requested email.
+            flowType: "implicit",
             autoRefreshToken: true,
             persistSession: true,
             detectSessionInUrl: true
@@ -70,11 +117,11 @@ async function startAdmin() {
             .order("created_at", { ascending: false });
 
         if (error) {
-            throw new Error(`Could not load project photos: ${error.message}`);
+            throw new Error(photoBackendMessage(error, "project photos"));
         }
 
         photoList.replaceChildren();
-        if (photos.length === 0) {
+        if (!Array.isArray(photos) || photos.length === 0) {
             const emptyMessage = document.createElement("li");
             emptyMessage.className = "admin-intro";
             emptyMessage.textContent = "No admin-added photos yet.";
@@ -106,16 +153,37 @@ async function startAdmin() {
         });
     }
 
+    async function loadVisitorCount() {
+        const { count, error } = await supabase
+            .from("site_visits")
+            .select("id", { count: "exact", head: true });
+
+        if (error) {
+            throw new Error(photoBackendMessage(error, "site visits"));
+        }
+        if (count === null) {
+            throw new Error("Supabase did not return a site visit count.");
+        }
+
+        visitorTotal.textContent = count.toLocaleString();
+        setStatus(visitorStatus, "", "");
+    }
+
     async function showSession(session) {
         if (!session) {
             adminTools.hidden = true;
             setupGuide.hidden = false;
             loginForm.hidden = false;
-            setStatus(loginStatus, "Request a one-time sign-in link to open the admin tools.", "");
+            const callbackError = authCallbackError();
+            if (callbackError) {
+                setStatus(loginStatus, `Email verification did not finish: ${callbackError}. Request a fresh link and open it again.`, "error");
+            } else {
+                setStatus(loginStatus, "Request a one-time sign-in link to open the admin tools.", "");
+            }
             return;
         }
 
-        if (session.user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+        if (session.user?.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
             const { error } = await supabase.auth.signOut();
             if (error) {
                 throw new Error(`This email is not authorized, and sign-out failed: ${error.message}`);
@@ -136,6 +204,12 @@ async function startAdmin() {
         } catch (error) {
             setStatus(uploadStatus, errorMessage(error), "error");
         }
+        try {
+            await loadVisitorCount();
+        } catch (error) {
+            visitorTotal.textContent = "Unavailable";
+            setStatus(visitorStatus, errorMessage(error), "error");
+        }
     }
 
     supabase.auth.onAuthStateChange((_event, session) => {
@@ -148,7 +222,13 @@ async function startAdmin() {
 
     loginForm.addEventListener("submit", async (event) => {
         event.preventDefault();
-        setBusy(loginButton, true, "Email me a secure sign-in link", "Sending sign-in link...");
+        const email = adminEmailInput.value.trim();
+        if (email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+            setStatus(loginStatus, "Enter the authorized admin email address.", "error");
+            return;
+        }
+
+        setBusy(loginButton, true, "Email me a verification link", "Sending verification link...");
         setStatus(loginStatus, "", "");
 
         try {
@@ -156,7 +236,7 @@ async function startAdmin() {
             redirectUrl.search = "";
             redirectUrl.hash = "";
             const { error } = await supabase.auth.signInWithOtp({
-                email: ADMIN_EMAIL,
+                email,
                 options: {
                     emailRedirectTo: redirectUrl.href,
                     shouldCreateUser: true
@@ -164,11 +244,11 @@ async function startAdmin() {
             });
 
             if (error) throw error;
-            setStatus(loginStatus, `A one-time sign-in link was sent to ${ADMIN_EMAIL}. Check your inbox.`, "success");
+            setStatus(loginStatus, `A verification sign-in link was sent to ${email}. Open it from your inbox to approve this browser.`, "success");
         } catch (error) {
             setStatus(loginStatus, `Could not send the sign-in link: ${errorMessage(error)}`, "error");
         } finally {
-            setBusy(loginButton, false, "Email me a secure sign-in link", "Sending sign-in link...");
+            setBusy(loginButton, false, "Email me a verification link", "Sending verification link...");
         }
     });
 
@@ -210,14 +290,14 @@ async function startAdmin() {
                     contentType: file.type,
                     upsert: false
                 });
-            if (uploadError) throw new Error(`Image upload failed: ${uploadError.message}`);
+            if (uploadError) throw new Error(photoBackendMessage(uploadError, "photo storage"));
             uploaded = true;
 
             const { error: recordError } = await supabase
                 .from("project_photos")
                 .insert({ storage_path: storagePath, alt_text: altText });
 
-            if (recordError) throw new Error(`Photo record failed: ${recordError.message}`);
+            if (recordError) throw new Error(photoBackendMessage(recordError, "project photos"));
 
             uploaded = false;
             uploadForm.reset();
@@ -251,13 +331,13 @@ async function startAdmin() {
             .from("project_photos")
             .delete()
             .eq("id", photo.id);
-        if (recordError) throw new Error(`Could not remove the photo record: ${recordError.message}`);
+        if (recordError) throw new Error(photoBackendMessage(recordError, "project photos"));
 
         const { error: storageError } = await supabase.storage
             .from(PROJECT_PHOTOS_BUCKET)
             .remove([photo.storage_path]);
         if (storageError) {
-            setStatus(uploadStatus, `Photo removed from the gallery, but its storage file could not be deleted: ${storageError.message}`, "error");
+            setStatus(uploadStatus, `Photo removed from the gallery, but its storage file could not be deleted: ${photoBackendMessage(storageError, "photo storage")}`, "error");
         } else {
             setStatus(uploadStatus, "Photo removed from the Projects gallery.", "success");
         }
