@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#166534">
+    <meta name="theme-color" content="#092b22">
     <meta name="robots" content="noindex, nofollow">
     <title>Admin Login | SR Solar</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="1.css?v=20261126-1">
+    <link rel="stylesheet" href="1.css?v=20261126-3">
     <script type="module" src="admin.js?v=20261126-2"></script>
 </head>
 <body class="admin-page">
@@ -17,33 +17,42 @@
                 <span class="brand-icon">SR</span>
                 <span>SR Solar</span>
             </a>
-            <a href="index.html#projects">View website</a>
+            <a class="admin-nav-link" href="index.html#projects">View website <span aria-hidden="true">↗</span></a>
         </nav>
     </header>
 
     <main class="admin-main">
         <section class="admin-card" aria-labelledby="admin-title">
-            <span class="eyebrow">Private tools</span>
-            <h1 id="admin-title">Admin login</h1>
-            <p class="admin-intro">Enter the authorized admin email and we’ll send a verification sign-in link. Open the link from your inbox to approve this browser and manage project photos.</p>
+            <div class="admin-login-copy">
+                <span class="eyebrow">Secure admin workspace</span>
+                <h1 id="admin-title">Manage your solar showcase.</h1>
+                <p class="admin-intro">Sign in to update project photos and check visitor activity. We’ll send a one-time verification link to the authorized admin email.</p>
+                <ul class="admin-highlights" aria-label="Admin tools">
+                    <li><span aria-hidden="true">✦</span> Project photo gallery</li>
+                    <li><span aria-hidden="true">◉</span> Visitor insights</li>
+                    <li><span aria-hidden="true">✓</span> Secure email sign-in</li>
+                </ul>
+            </div>
 
-            <div class="admin-setup" id="setup-guide">
-                <h2>Supabase setup checklist</h2>
-                <p>Check these one-time settings if sign-in or photo management is not working:</p>
+            <form class="admin-form" id="login-form">
+                <label for="admin-email">Authorized admin email</label>
+                <input id="admin-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
+                <button class="primary-button" id="login-button" type="submit" disabled>Email me a verification link <span aria-hidden="true">→</span></button>
+                <p class="admin-form-note">The link approves this browser. No password is stored on the website.</p>
+            </form>
+
+            <details class="admin-setup" id="setup-guide">
+                <summary>Setup help and troubleshooting</summary>
+                <div class="admin-setup-content">
+                    <p>Check these one-time settings if sign-in or photo management is not working:</p>
                 <ol>
                     <li>Confirm <code>supabase-config.js</code> contains the Supabase Project URL and public publishable/anon key. The public key is designed for browser use; never put a service-role key here.</li>
                     <li>Run <a href="supabase-setup.sql">supabase-setup.sql</a> in your Supabase SQL Editor to set up photo management, secure visit counts, and private contact inquiries.</li>
                     <li>In Supabase Authentication URL settings, set the site URL to <code>https://mokshagnen2008.github.io/sr-solar-site</code> and add <code>https://mokshagnen2008.github.io/sr-solar-site/admin.html</code> as an allowed redirect URL. Enable email sign-in.</li>
                     <li>After changing the config, publish the update to the existing GitHub Pages repository.</li>
                 </ol>
-            </div>
-
-            <form class="admin-form" id="login-form">
-                <label for="admin-email">Admin email</label>
-                <input id="admin-email" name="email" type="email" autocomplete="email" required>
-                <button class="primary-button" id="login-button" type="submit" disabled>Email me a verification link</button>
-                <p class="admin-intro">The link is sent only for the authorized admin email. Select it in your inbox to verify the session; no password is stored here.</p>
-            </form>
+                </div>
+            </details>
 
             <p class="admin-status" id="login-status" role="status" aria-live="polite">Admin sign-in is disabled until Supabase is configured.</p>
         </section>
