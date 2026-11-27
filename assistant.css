@@ -1,0 +1,6 @@
+.sr-assistant-prompts button:disabled { opacity: .65; cursor: wait; }
+.sr-chat-typing { color: #64766b; }
+.sr-chat-typing::after { content: ""; display: inline-block; width: 14px; height: 5px; margin-left: 4px; border-radius: 5px; background: #d7b45c; animation: sr-chat-pulse 1s ease-in-out infinite alternate; }
+@keyframes sr-chat-pulse { from { opacity: .35; transform: scaleX(.55); } to { opacity: 1; transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .sr-chat-typing::after { animation: none; } }
+
