@@ -8,7 +8,7 @@ The admin page supports email verification links, project photo upload/removal, 
 
 Run the updated `supabase-setup.sql` in the Supabase SQL Editor. It creates `contact_inquiries` with row-level security enabled and no public table access. The function writes through the server-only service-role key.
 
-The same SQL also configures the public photo bucket, admin-only photo management, visit tracking, and a read-only aggregate visit-count function. In Supabase Authentication URL settings, allow the deployed site's `/admin.html` URL as an email sign-in redirect and enable email sign-in. Only the address in `ADMIN_EMAIL` can open the admin tools. The admin types that address and approves the browser by opening the emailed sign-in link.
+The same SQL also configures the public photo bucket, admin-only photo management, visit tracking, and a read-only aggregate visit-count function. In Supabase Authentication URL settings, allow the deployed site's `/admin.html` URL as an email sign-in redirect and enable email sign-in. Only the address in `ADMIN_EMAIL` can open the admin tools. The admin types that authorized address and opens the emailed one-time link on whichever device should hold the admin session. Access is checked against the verified email account; no device is enrolled or approved. Keep `ADMIN_EMAIL` and the email checks in `supabase-setup.sql` aligned.
 
 ## Local backend
 
@@ -22,3 +22,4 @@ The same SQL also configures the public photo bucket, admin-only photo managemen
 Deploy the contents of `api` as an Azure Functions app running Node.js 20. Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` as application settings in Azure. Publish the static website to a host that routes `/api/*` to this function (Azure Static Web Apps supports this layout when the API app is linked). The current GitHub Pages site is static and cannot run Azure Functions; its contact form will show the phone fallback until the API is deployed and routed at `/api/contact`.
 
 After deployment, submit a test inquiry and confirm it appears in the Supabase `contact_inquiries` table. Delete the test record afterward.
+

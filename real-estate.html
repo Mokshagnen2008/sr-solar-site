@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#103d30">
+    <meta name="description" content="Talk with SR Consistency about real estate and property opportunities.">
+    <title>Real Estate | SR Consistency</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="1.css?v=20261127-1">
+</head>
+<body class="group-page subpage">
+    <header class="topbar"><nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="index.html" aria-label="SR Consistency home"><span class="brand-icon">SR</span><span>SR Consistency</span></a>
+        <button class="menu-button" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu"><span></span><span></span><span></span></button>
+        <div class="nav-links" id="nav-links"><a href="index.html">Home</a><a href="solar.html">SR Solar</a><a href="real-estate.html" aria-current="page">Real Estate</a><a href="global-consultants.html">Global Consultants</a></div>
+        <a class="admin-nav-button" href="admin.html">Admin Login</a>
+    </nav></header>
+    <main>
+        <section class="subpage-hero estate-hero">
+            <div class="subpage-hero-copy"><span class="eyebrow">Property opportunities</span><h1>Find your next place with <span>SR Real Estate.</span></h1><p>Whether you are buying, selling, or exploring your options, start a conversation with our team and tell us what you are looking for.</p><a class="primary-button" href="mailto:ssmkssv5@gmail.com?subject=SR%20Real%20Estate%20enquiry">Make an enquiry <span aria-hidden="true">↗</span></a></div>
+            <div class="subpage-visual estate-visual" aria-hidden="true"><div class="estate-sun"></div><div class="estate-building building-back"></div><div class="estate-building building-front"><span></span><span></span><span></span></div><div class="estate-ground"></div></div>
+        </section>
+        <section class="subpage-content section"><div class="section-heading"><span class="eyebrow">How we can help</span><h2>Start with what matters to you</h2></div><div class="detail-grid">
+            <article><span class="detail-number">01</span><h3>Buying</h3><p>Share your preferred location, property type, and budget so we can understand your search.</p></article>
+            <article><span class="detail-number">02</span><h3>Selling</h3><p>Tell us about your property and goals to begin a discussion about the next steps.</p></article>
+            <article><span class="detail-number">03</span><h3>Property enquiries</h3><p>Ask a question or request a conversation about an opportunity that interests you.</p></article>
+        </div><p class="subpage-note">Availability, prices, and transaction terms depend on each property. Details will be confirmed directly with you.</p></section>
+    </main>
+    <footer class="group-footer"><p>&copy; <span id="current-year"></span> SR Consistency.</p><a href="index.html">SR Consistency home</a><a href="admin.html">Admin login</a></footer>
+    <script>const menuButton=document.querySelector(".menu-button"),navLinks=document.querySelector(".nav-links");menuButton.addEventListener("click",()=>{const open=menuButton.getAttribute("aria-expanded")==="true";menuButton.setAttribute("aria-expanded",String(!open));navLinks.classList.toggle("open")});navLinks.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>{menuButton.setAttribute("aria-expanded","false");navLinks.classList.remove("open")}));document.getElementById("current-year").textContent=new Date().getFullYear();</script>
+    <script type="module" src="visitor-tracker.js?v=20261127-1"></script>
+</body>
+</html>
+

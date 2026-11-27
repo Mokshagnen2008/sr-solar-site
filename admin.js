@@ -244,7 +244,7 @@ async function startAdmin() {
             });
 
             if (error) throw error;
-            setStatus(loginStatus, `A verification sign-in link was sent to ${email}. Open it from your inbox to approve this browser.`, "success");
+            setStatus(loginStatus, `A one-time sign-in link was sent to ${email}. Open that email link on the device you want to use for the admin session.`, "success");
         } catch (error) {
             setStatus(loginStatus, `Could not send the sign-in link: ${errorMessage(error)}`, "error");
         } finally {
@@ -369,3 +369,4 @@ async function startAdmin() {
 startAdmin().catch((error) => {
     setStatus(loginStatus, `Admin setup error: ${errorMessage(error)}`, "error");
 });
+
