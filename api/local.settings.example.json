@@ -4,6 +4,10 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "node",
     "SUPABASE_URL": "https://YOUR_PROJECT_ID.supabase.co",
-    "SUPABASE_SERVICE_ROLE_KEY": "YOUR_SERVER_ONLY_SERVICE_ROLE_KEY"
+    "SUPABASE_PUBLIC_KEY": "YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY": "YOUR_SERVER_ONLY_SERVICE_ROLE_KEY",
+    "ADMIN_EMAIL": "authorized-admin@example.com",
+    "SITE_URL": "https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPOSITORY",
+    "ASSISTANT_ALLOWED_ORIGINS": "https://YOUR_GITHUB_USERNAME.github.io"
   }
 }

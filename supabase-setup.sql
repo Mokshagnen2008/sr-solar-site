@@ -32,9 +32,16 @@ create table if not exists public.contact_inquiries (
     created_at timestamptz not null default now()
 );
 
+create table if not exists public.admin_signin_limits (
+    email text primary key check (email = lower(btrim(email))),
+    utc_day date not null,
+    request_count integer not null check (request_count >= 0)
+);
+
 alter table public.project_photos enable row level security;
 alter table public.site_visits enable row level security;
 alter table public.contact_inquiries enable row level security;
+alter table public.admin_signin_limits enable row level security;
 
 grant select on public.project_photos to anon, authenticated;
 grant insert, delete on public.project_photos to authenticated;
@@ -42,6 +49,40 @@ revoke all on public.site_visits from anon, authenticated;
 grant insert on public.site_visits to anon, authenticated;
 grant select on public.site_visits to authenticated;
 revoke all on public.contact_inquiries from public, anon, authenticated;
+revoke all on public.admin_signin_limits from public, anon, authenticated;
+grant all on public.admin_signin_limits to service_role;
+
+create or replace function public.consume_admin_signin_attempt(p_email text, p_limit integer)
+returns table (allowed boolean, remaining integer)
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+    normalized_email text := lower(btrim(p_email));
+    today_utc date := (now() at time zone 'UTC')::date;
+    attempts integer;
+begin
+    if normalized_email = '' or p_limit < 1 or p_limit > 10 then
+        raise exception 'Invalid admin sign-in limit request';
+    end if;
+
+    insert into public.admin_signin_limits as limits (email, utc_day, request_count)
+    values (normalized_email, today_utc, 1)
+    on conflict (email) do update
+    set utc_day = excluded.utc_day,
+        request_count = case
+            when limits.utc_day < excluded.utc_day then 1
+            else limits.request_count + 1
+        end
+    returning request_count into attempts;
+
+    return query select attempts <= p_limit, greatest(p_limit - attempts, 0);
+end;
+$$;
+
+revoke all on function public.consume_admin_signin_attempt(text, integer) from public, anon, authenticated;
+grant execute on function public.consume_admin_signin_attempt(text, integer) to service_role;
 
 create or replace function public.get_public_site_visit_count()
 returns bigint

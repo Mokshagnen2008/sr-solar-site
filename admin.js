@@ -22,6 +22,7 @@ const photoList = document.getElementById("admin-photo-list");
 const signoutButton = document.getElementById("signout-button");
 const visitorTotal = document.getElementById("visitor-total");
 const visitorStatus = document.getElementById("visitor-status");
+const signInEndpoint = document.querySelector('meta[name="admin-signin-api"]')?.content?.trim();
 
 function setStatus(element, message, state) {
     element.textContent = message;
@@ -235,16 +236,23 @@ async function startAdmin() {
             const redirectUrl = new URL("./admin.html", window.location.href);
             redirectUrl.search = "";
             redirectUrl.hash = "";
-            const { error } = await supabase.auth.signInWithOtp({
-                email,
-                options: {
-                    emailRedirectTo: redirectUrl.href,
-                    shouldCreateUser: true
-                }
+            if (!signInEndpoint) {
+                throw new Error("The protected daily sign-in service is not configured. Please contact the site administrator.");
+            }
+            const response = await fetch(signInEndpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    apikey: SUPABASE_PUBLIC_KEY
+                },
+                body: JSON.stringify({ email, redirectTo: redirectUrl.href })
             });
-
-            if (error) throw error;
-            setStatus(loginStatus, `A one-time sign-in link was sent to ${email}. Open that email link on the device you want to use for the admin session.`, "success");
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                const remaining = Number.isInteger(result.remaining) ? ` ${result.remaining} requests remain today.` : "";
+                throw new Error(`${result.error || "Could not send the sign-in link."}${remaining}`);
+            }
+            setStatus(loginStatus, `A one-time sign-in link was sent to ${email}. Open it on the device where you want the admin session.${Number.isInteger(result.remaining) ? ` ${result.remaining} of 10 sign-in requests remain today.` : ""}`, "success");
         } catch (error) {
             setStatus(loginStatus, `Could not send the sign-in link: ${errorMessage(error)}`, "error");
         } finally {
@@ -281,6 +289,7 @@ async function startAdmin() {
         setStatus(uploadStatus, "", "");
         const storagePath = `${crypto.randomUUID()}.${allowedTypes[file.type]}`;
         let uploaded = false;
+        let photoRecordSaved = false;
 
         try {
             const { error: uploadError } = await supabase.storage
@@ -299,10 +308,15 @@ async function startAdmin() {
 
             if (recordError) throw new Error(photoBackendMessage(recordError, "project photos"));
 
+            photoRecordSaved = true;
             uploaded = false;
             uploadForm.reset();
             setStatus(uploadStatus, "Photo added to the Projects gallery.", "success");
-            await loadPhotoList();
+            try {
+                await loadPhotoList();
+            } catch (refreshError) {
+                setStatus(uploadStatus, `Photo was uploaded successfully, but the gallery could not refresh: ${errorMessage(refreshError)}`, "error");
+            }
         } catch (error) {
             let message = errorMessage(error);
             if (uploaded) {
@@ -317,7 +331,11 @@ async function startAdmin() {
                     message += `. Uploaded file cleanup failed: ${errorMessage(cleanupError)}`;
                 }
             }
-            setStatus(uploadStatus, message, "error");
+            if (photoRecordSaved) {
+                setStatus(uploadStatus, `Photo was uploaded successfully, but the gallery could not refresh: ${message}`, "error");
+            } else {
+                setStatus(uploadStatus, message, "error");
+            }
         } finally {
             setBusy(uploadButton, false, "Upload project photo", "Uploading...");
         }
@@ -369,4 +387,3 @@ async function startAdmin() {
 startAdmin().catch((error) => {
     setStatus(loginStatus, `Admin setup error: ${errorMessage(error)}`, "error");
 });
-
