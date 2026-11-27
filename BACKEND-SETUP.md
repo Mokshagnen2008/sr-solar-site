@@ -12,7 +12,19 @@ The same SQL configures the public photo bucket, admin-only photo management, vi
 
 ## Website assistant
 
-The chat widget works on GitHub Pages using its built-in answers. To use the Azure endpoint too, add a `meta` tag to the public pages with the full HTTPS URL of the deployed function, for example `<meta name="sr-assistant-api" content="https://YOUR_FUNCTION_APP.azurewebsites.net/api/assistant">`. Add the GitHub Pages origin (for example, `https://mokshagnen2008.github.io`) to the Function App's CORS allowlist and set the same origin in the `ASSISTANT_ALLOWED_ORIGINS` application setting. The widget falls back to its built-in answers if the backend is unavailable.
+The website chat is a guided FAQ assistant for SR Solar, SR Real Estate, and SR Global Consultants. It runs on GitHub Pages without another app or service, does not save chat messages, and does not send them to an AI provider. Answers are shared by the browser and optional API so the two versions stay consistent.
+
+Bot settings and files:
+
+- `assistant-knowledge.js` is the public bot settings and knowledge file. It contains the approved answers, topic buttons, contact email and phone, page links, and privacy note. Edit this file to maintain the bot's answers and routing.
+- `site-assistant.js` builds the chat panel, handles messages, accessibility, safe contact links, and its optional API connection.
+- `1.css` styles the chat on desktop and mobile.
+- `index.html`, `solar.html`, `real-estate.html`, and `global-consultants.html` load the shared knowledge and chat files.
+- `api/src/functions/assistant.js` serves the same curated answers if an Azure Functions API is connected. It validates message type and length and limits browser access with an origin allowlist.
+
+No Gmail, Telegram, or Supabase access is needed for the current website FAQ bot. GitHub is needed to publish website changes. Azure is optional: to connect its API, deploy `api` to an Azure Function App and add a `meta` tag to the public pages with that function's HTTPS URL, for example `<meta name="sr-assistant-api" content="https://YOUR_FUNCTION_APP.azurewebsites.net/api/assistant">`. Add the GitHub Pages origin (for example, `https://mokshagnen2008.github.io`) to the Function App CORS allowlist and the `ASSISTANT_ALLOWED_ORIGINS` application setting. The website continues using its local answers if the API is unavailable.
+
+The current assistant provides curated guidance only. It does not confirm current job vacancies or property listings, quote solar prices, accept applications, or guarantee employment, licensing, or visa outcomes. Visitors should not enter passwords, payment information, or medical documents in chat. If adding AI-generated answers, saved conversations, or lead delivery later, use a server-side provider integration and explicitly configure its data handling and secrets in the hosting provider; never put private keys in these public files.
 
 The repository's `Backend checks` workflow runs automatically when backend or assistant files change. It checks the Azure Functions JavaScript syntax. Deploying the backend itself still requires an Azure Function App and its deployment credentials.
 
@@ -28,3 +40,4 @@ The repository's `Backend checks` workflow runs automatically when backend or as
 Deploy the contents of `api` as an Azure Functions app running Node.js 20. Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` as application settings in Azure. Publish the static website to a host that routes `/api/*` to this function (Azure Static Web Apps supports this layout when the API app is linked). The current GitHub Pages site is static and cannot run Azure Functions; its contact form will show the phone fallback until the API is deployed and routed at `/api/contact`.
 
 After deployment, submit a test inquiry and confirm it appears in the Supabase `contact_inquiries` table. Delete the test record afterward.
+
