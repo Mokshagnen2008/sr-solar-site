@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#166534">
     <title>SR Solar | SR Consistency</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261127-2">
-    <link rel="stylesheet" href="1.css?v=20261127-1">
+    <link rel="stylesheet" href="1.css?v=20261127-2">
 </head>
 <body>
     <header class="topbar">
@@ -238,40 +238,6 @@
         </div>
     </footer>
 
-    <aside class="quick-tools" aria-label="Solar help and appointment tools">
-        <section class="chat-panel" id="chat-panel" aria-label="Solar information assistant" hidden>
-            <div class="chat-heading">
-                <div>
-                    <strong>SR Solar Assistant</strong>
-                    <span>Quick answers about solar</span>
-                </div>
-                <button class="chat-close" id="chat-close" type="button" aria-label="Close solar assistant">×</button>
-            </div>
-            <div class="chat-messages" id="chat-messages" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Chat conversation">
-                <p class="chat-message chat-message-assistant">Hi! Ask about solar panels, batteries, power outages, installation, maintenance, or savings. I answer common questions using built-in information.</p>
-            </div>
-            <p class="chat-note">Quick FAQ answers only; messages stay in your browser. For advice about your system or a quote, call 9885798224.</p>
-            <form class="chat-form" id="chat-form">
-                <label class="sr-only" for="chat-question">Ask the solar assistant</label>
-                <input id="chat-question" name="question" type="text" maxlength="2000" autocomplete="off" placeholder="Type your question..." required>
-                <button id="chat-send" type="submit">Send</button>
-            </form>
-            <p class="chat-status" id="chat-status" role="status" aria-live="polite"></p>
-        </section>
-        <a class="calendar-button" href="mailto:ssmkssv5@gmail.com?subject=Solar%20consultation%20appointment" aria-label="Request an appointment by email" title="Request an appointment">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
-                <path d="M16 3v4M8 3v4M3 10h18"></path>
-            </svg>
-        </a>
-        <button class="chat-button" id="chat-toggle" type="button" aria-expanded="false" aria-controls="chat-panel" aria-label="Open solar assistant" title="Solar assistant">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-6a7.5 7.5 0 1 1 17-3.5Z"></path>
-                <path d="M8 11h8M8 14h5"></path>
-            </svg>
-        </button>
-    </aside>
-
     <script>
         const menuButton = document.querySelector(".menu-button");
         const navLinks = document.querySelector(".nav-links");
@@ -379,105 +345,10 @@
             }
         });
 
-        const chatToggle = document.getElementById("chat-toggle");
-        const chatPanel = document.getElementById("chat-panel");
-        const chatInput = document.getElementById("chat-question");
-        const chatMessages = document.getElementById("chat-messages");
-        const chatForm = document.getElementById("chat-form");
-        const chatSend = document.getElementById("chat-send");
-        const chatStatus = document.getElementById("chat-status");
-
-        const solarFaqs = [
-            {
-                keywords: ["power outage", "power cut", "electricity cut", "grid outage", "blackout", "outage", "grid failure", "grid goes down"],
-                answer: "Most grid-connected solar inverters shut down during a power outage for safety. Solar can power your home during an outage only if your system has compatible backup equipment, such as a suitable battery and inverter. Ask a qualified installer to check your setup."
-            },
-            {
-                keywords: ["battery", "backup", "store electricity", "store power"],
-                answer: "A solar battery stores extra electricity for later, such as at night or during an outage. The right size depends on which appliances you want to run and for how long. Check battery and inverter compatibility with a qualified installer."
-            },
-            {
-                keywords: ["clean panel", "clean solar panel", "how do i clean", "cleaning", "dust", "bird droppings", "dirty panels", "maintain", "maintenance"],
-                answer: "Solar panel cleaning needs depend on local dust and rain. Follow the panel manufacturer's guidance and never climb onto a roof without proper safety equipment. Ask a qualified professional if cleaning requires roof access."
-            },
-            {
-                keywords: ["saving", "save money", "electricity bill", "bill", "cost", "price", "payback", "tariff"],
-                answer: "Solar savings depend on your electricity use, system size, sunlight, tariff, and local utility rules. For a useful estimate, have your recent electricity bills and roof details reviewed by an installer. SR Solar can discuss a quote at 9885798224."
-            },
-            {
-                keywords: ["install", "installation", "roof", "site survey", "site assessment", "permit"],
-                answer: "A solar installation starts with a site assessment of roof space, shade, structure, wiring, and utility requirements. A qualified installer can recommend a safe system size and explain approvals, equipment, warranties, and installation scope."
-            },
-            {
-                keywords: ["inverter", "convert dc", "dc to ac"],
-                answer: "A solar inverter converts the panels' direct-current (DC) electricity into alternating-current (AC) electricity used by most home appliances. The inverter also affects how a system handles batteries and outages."
-            },
-            {
-                keywords: ["how do solar panels work", "how do panels work", "how does solar work", "photovoltaic", "solar panel working"],
-                answer: "Solar panels convert sunlight into direct-current (DC) electricity. An inverter changes it to alternating current (AC) for your appliances. Extra electricity may charge a compatible battery or be sent to the grid, depending on your system and local rules."
-            },
-            {
-                keywords: ["brand", "manufacturer", "choose panel", "best panel", "panel efficiency", "warranty", "module"],
-                answer: "When comparing panels, look at efficiency, product and performance warranties, certifications, and the installer's support. Check current product details with the manufacturer or an authorized seller; availability and terms can change."
-            },
-            {
-                keywords: ["address", "location", "where are you", "find you", "google maps", "tirupati", "mr palli"],
-                answer: "SR Solar is in Tirupati, near MR Palli Circle, Andhra Pradesh 517501. Use the Open in Google Maps link in the Location section of this page."
-            },
-            {
-                keywords: ["contact", "phone", "call", "email", "appointment", "quote", "estimate"],
-                answer: "For an appointment, quote, or system-specific advice, call SR Solar at 9885798224 or use the contact links on this page."
-            }
-        ];
-
-        function addChatMessage(role, text) {
-            const message = document.createElement("p");
-            message.className = `chat-message chat-message-${role}`;
-            message.textContent = text;
-            chatMessages.append(message);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            return message;
-        }
-
-        function answerSolarQuestion(question) {
-            const normalizedQuestion = question.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
-            const match = solarFaqs.find((faq) =>
-                faq.keywords.some((keyword) => normalizedQuestion.includes(keyword))
-            );
-
-            return match
-                ? match.answer
-                : "I can answer common questions about solar panels, batteries, outages, installation, maintenance, savings, and SR Solar's location. Try asking about one of those topics, or call 9885798224 for help.";
-        }
-
-        function setChatOpen(isOpen) {
-            chatPanel.hidden = !isOpen;
-            chatToggle.setAttribute("aria-expanded", String(isOpen));
-            if (isOpen) chatInput.focus();
-        }
-
-        chatToggle.addEventListener("click", () => {
-            setChatOpen(chatPanel.hidden);
-        });
-        document.getElementById("chat-close").addEventListener("click", () => {
-            setChatOpen(false);
-            chatToggle.focus();
-        });
-
-        chatForm.addEventListener("submit", (event) => {
-            event.preventDefault();
-            const question = chatInput.value.trim();
-            if (!question) return;
-
-            addChatMessage("user", question);
-            addChatMessage("assistant", answerSolarQuestion(question));
-            chatStatus.textContent = "Answered using built-in solar FAQs.";
-            chatInput.value = "";
-            chatInput.focus();
-        });
     </script>
-    <script type="module" src="project-gallery.js?v=20261125-4"></script>
-    <script type="module" src="visitor-tracker.js?v=20261126-2"></script>
+    <script type="module" src="project-gallery.js?v=20261127-2"></script>
+    <script type="module" src="visitor-tracker.js?v=20261127-2"></script>
+    <script type="module" src="site-assistant.js?v=20261127-1"></script>
 </body>
 </html>
 

@@ -1,12 +1,12 @@
 {
-  "name": "sr-solar-site-api",
+  "name": "sr-consistency-site-api",
   "version": "1.0.0",
   "private": true,
-  "description": "Azure Functions backend for SR Solar",
+  "description": "Azure Functions backend for the SR Consistency website",
   "main": "src/functions/*.js",
   "scripts": {
     "start": "func start",
-    "check": "node --check src/functions/contact.js"
+    "check": "node --check src/functions/contact.js && node --check src/functions/assistant.js"
   },
   "dependencies": {
     "@azure/functions": "^4.7.2"
@@ -15,3 +15,4 @@
     "node": ">=20"
   }
 }
+
