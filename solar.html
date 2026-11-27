@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#166534">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; form-action 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://bqgbpxruysashzzouept.supabase.co; connect-src 'self' https://bqgbpxruysashzzouept.supabase.co wss://bqgbpxruysashzzouept.supabase.co; font-src 'self' data:; upgrade-insecure-requests">
     <title>SR Solar | SR Consistency</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261127-2">
     <link rel="stylesheet" href="1.css?v=20261127-3">
@@ -234,114 +236,7 @@
         </div>
     </footer>
 
-    <script>
-        const menuButton = document.querySelector(".menu-button");
-        const navLinks = document.querySelector(".nav-links");
-
-        menuButton.addEventListener("click", () => {
-            const isOpen = menuButton.getAttribute("aria-expanded") === "true";
-            menuButton.setAttribute("aria-expanded", String(!isOpen));
-            navLinks.classList.toggle("open");
-        });
-
-        navLinks.querySelectorAll("a").forEach((link) => {
-            link.addEventListener("click", () => {
-                menuButton.setAttribute("aria-expanded", "false");
-                navLinks.classList.remove("open");
-            });
-        });
-
-        document.getElementById("current-year").textContent = new Date().getFullYear();
-
-        const shareButton = document.getElementById("share-site");
-        const shareStatus = document.getElementById("share-status");
-
-        async function copyWebsiteUrl(url) {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                try {
-                    await navigator.clipboard.writeText(url);
-                    return;
-                } catch {
-                    // Fall through to the browser's copy command.
-                }
-            }
-
-            const copyField = document.createElement("textarea");
-            copyField.value = url;
-            copyField.setAttribute("readonly", "");
-            copyField.style.position = "fixed";
-            copyField.style.opacity = "0";
-            document.body.append(copyField);
-            copyField.select();
-            const copied = document.execCommand("copy");
-            copyField.remove();
-
-            if (!copied) {
-                throw new Error("The browser could not copy the website link.");
-            }
-        }
-
-        shareButton.addEventListener("click", async () => {
-            const url = new URL(window.location.href);
-            url.hash = "";
-            const shareUrl = url.href;
-            shareStatus.textContent = "";
-
-            if (typeof navigator.share === "function") {
-                try {
-                    await navigator.share({
-                        title: document.title,
-                        text: "Visit SR Solar",
-                        url: shareUrl
-                    });
-                    shareStatus.textContent = "Share options opened.";
-                    return;
-                } catch (error) {
-                    if (error.name === "AbortError") return;
-                }
-            }
-
-            try {
-                await copyWebsiteUrl(shareUrl);
-                shareStatus.textContent = "Website link copied.";
-            } catch {
-                shareStatus.textContent = `Copy this website link: ${shareUrl}`;
-            }
-        });
-
-        const contactForm = document.getElementById("contact-form");
-        const contactSubmit = document.getElementById("contact-submit");
-        const contactStatus = document.getElementById("contact-status");
-
-        contactForm.addEventListener("submit", async (event) => {
-            event.preventDefault();
-            const inquiry = Object.fromEntries(new FormData(contactForm).entries());
-            contactSubmit.disabled = true;
-            contactSubmit.textContent = "Sending...";
-            contactStatus.textContent = "";
-            contactStatus.dataset.state = "";
-
-            try {
-                const response = await fetch("/api/contact", {
-                    method: "POST",
-                    headers: { "content-type": "application/json" },
-                    body: JSON.stringify(inquiry)
-                });
-                const result = await response.json().catch(() => ({}));
-                if (!response.ok) throw new Error(result.error || "The contact service is unavailable.");
-                contactStatus.textContent = result.message || "Thanks. Your inquiry has been sent to SR Solar.";
-                contactStatus.dataset.state = "success";
-                contactForm.reset();
-            } catch (error) {
-                contactStatus.textContent = `${error.message} You can also call 9885798224 or email ssmkssv5@gmail.com.`;
-                contactStatus.dataset.state = "error";
-            } finally {
-                contactSubmit.disabled = false;
-                contactSubmit.textContent = "Send inquiry";
-            }
-        });
-
-    </script>
+    <script src="site.js?v=20261127-1"></script>
     <script type="module" src="project-gallery.js?v=20261127-2"></script>
     <script type="module" src="visitor-tracker.js?v=20261127-2"></script>
     <script type="module" src="site-assistant.js?v=20261127-1"></script>
