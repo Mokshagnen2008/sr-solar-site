@@ -5,12 +5,14 @@ on:
     branches: [main]
     paths:
       - "api/**"
+      - "assistant-knowledge.js"
       - "site-assistant.js"
       - ".github/workflows/backend-check.yml"
   pull_request:
     branches: [main]
     paths:
       - "api/**"
+      - "assistant-knowledge.js"
       - "site-assistant.js"
       - ".github/workflows/backend-check.yml"
   workflow_dispatch:
